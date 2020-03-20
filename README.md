@@ -5,7 +5,7 @@ All raw data is directly downloaded from [Ministerio de Sanidad website](https:/
 
 # Graphs
 ## Incidencia acumulada (casos/1000 hab)
-![casos](https://github.com/victorvicpal/COVID19_es/blob/master/imgs/IA_170320.png)
+![casos](https://github.com/victorvicpal/COVID19_es/blob/master/imgs/IA_200320.png)
 
 ## Models
 ### SIR model
