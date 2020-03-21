@@ -29,14 +29,16 @@ def parsing_table(string):
 
 def get_lst(string):
     ind_ini = string.lower().find('andalucía')
-    ind_fin = string[ind_ini:].lower().find('total')
+    ind_fin = min(string[ind_ini:].lower().find('total'),string[ind_ini:].lower().find('españa'))
     list_tab = string[ind_ini:ind_ini+ind_fin].split('\n')
     list_tab = [el.replace('.','') for el in [el.rstrip() for el in list_tab] if el != '']
     list_tab = [el.replace(',','.') for el in [el.rstrip() for el in list_tab] if el != '']
     return [parsing_table(el) for el in list_tab]
 
-def save_csv(lst,fecha, path):
-    if len(lst[0])==5:
+def save_csv(lst, fecha, path):
+    if len(lst[0])==7:
+        cols = ['CCAA', 'casos', 'IA','Hospitalizados', 'UCI', 'muertes', 'nuevos']
+    elif len(lst[0])==5:
         cols = ['CCAA', 'casos', 'IA', 'UCI', 'muertes']
     elif len(lst[0])==4:
         cols = ['CCAA', 'casos', 'IA', 'UCI']
