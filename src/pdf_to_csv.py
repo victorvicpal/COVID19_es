@@ -36,7 +36,9 @@ def get_lst(string):
     return [parsing_table(el) for el in list_tab]
 
 def save_csv(lst, fecha, path):
-    if len(lst[0])==7:
+    if len(lst[0])==8:
+        cols = ['CCAA', 'casos', 'IA','Hospitalizados', 'UCI', 'muertes', 'curados','nuevos']
+    elif len(lst[0])==7:
         cols = ['CCAA', 'casos', 'IA','Hospitalizados', 'UCI', 'muertes', 'nuevos']
     elif len(lst[0])==5:
         cols = ['CCAA', 'casos', 'IA', 'UCI', 'muertes']
