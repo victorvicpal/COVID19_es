@@ -17,8 +17,8 @@ import numpy as np
 
 def get_fecha(string):
     ind_ini = string.find('(COVID-19)')
-    ind_fin = string.find('2020')
-    return string[ind_ini:ind_fin].split('\n')[-1]+'2020'
+    ind_fin = string.find('.20')
+    return string[ind_ini:ind_fin].split('\n')[-1]+'.2020'
 
 def parsing_table(string):
     first_number = re.search(r'[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?', string).group()
