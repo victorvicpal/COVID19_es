@@ -50,8 +50,8 @@ def CCAA_correction(df):
         variables = list(df.columns)
         c = variables.index('fecha')+1
         rounds = [0,2,0,0]
-        for var, r in zip(variables[c:],rounds):
-            df.loc[ind[0]+1, var], df.loc[ind[0]+2, var] = fill_gaps(df, var, ind[0], r)
+        #for var, r in zip(variables[c:],rounds):
+        #    df.loc[ind[0]+1, var], df.loc[ind[0]+2, var] = fill_gaps(df, var, ind[0], r)
         ind = date_lag(df['fecha'])
     return df
 
