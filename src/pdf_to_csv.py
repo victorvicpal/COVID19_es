@@ -35,6 +35,12 @@ def get_lst(string):
     list_tab = [el.replace(',','.') for el in [el.rstrip() for el in list_tab] if el != '']
     return [parsing_table(el) for el in list_tab]
 
+def hasNumbers(inputString):
+    return bool(re.search(r'\d', inputString))
+
+def justNumbers(inputString):
+    return re.search(r'[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?', inputString).group()
+
 def save_csv(lst, fecha, path):
     if len(lst[0])==8:
         cols = ['CCAA', 'casos', 'IA','Hospitalizados', 'UCI', 'muertes', 'curados','nuevos']
@@ -65,6 +71,14 @@ def main(argv):
     rawdata = parser.from_file(inputfile)
     fecha = get_fecha(rawdata['content'])
     lst = get_lst(rawdata['content'])
+    
+    for i, l in enumerate(lst):
+        for j, el in enumerate(l):
+            if hasNumbers(el):
+                lst[i][j] = justNumbers(el)
+            else:
+                lst[i][j] = el
+    
     save_csv(lst, fecha,'../data/csv_data/COVID_es_{}.csv'.format(fecha.replace('.','_')))
     print('COVID_es_{}.csv created'.format(fecha.replace('.','_')))
 
