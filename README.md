@@ -57,4 +57,4 @@ The `notebooks` folder contains some examples of epidemologic models such as `SI
 ## Contribute
 Feel free to contact me or make a pull-request if you want to change/add anything.
 
-** Special thanks to [Pedro Vélez](https://github.com/PedroVelez) for his contribution to this repo **
+**Special thanks to [Pedro Vélez](https://github.com/PedroVelez) and [covid-19-stats](https://github.com/covid-19-stats) for their contribution to this repo**
