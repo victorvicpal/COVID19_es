@@ -9,9 +9,7 @@ import numpy as np
 ###############################################
 #                                             #
 #    From PDF to CSV -- Based on structured   #
-#    reports from Actualizacion_37 and only   #
-#    for weekly updates. Weekend documents    #
-#    do not have a specific format.           #
+#    reports from Actualizacion_77            #
 #                                             #
 ###############################################
 
@@ -19,65 +17,51 @@ import numpy as np
 def get_fecha(string):
     ind_ini = string.find('(COVID-19)')
     ind_fin = string.find('.20')
-    return string[ind_ini:ind_fin].split('\n')[-1] + '.2020'
+    return string[ind_ini+12:ind_fin].split('\n')[-1]+'.2020'
 
+def new_ccaa(text):
+    dic = {'Castilla La Mancha': 'CastillaLaMancha', '.': '', ',': '.',
+           'Castilla y León': 'CastillayLeón', '\n' : '',
+           'C. Valenciana': 'CValenciana',
+           'País Vasco': 'PaísVasco',
+           'La Rioja': 'LaRioja'}
+    regex = re.compile("(%s)" % "|".join(map(re.escape, dic.keys())))
+    return regex.sub(lambda mo: dic[mo.string[mo.start():mo.end()]], text)
 
-def parsing_table(string):
-    first_number = re.search(
-        r'[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?',
-        string).group()
-    new_lst = string.split(' ')
-    ind = new_lst.index(first_number)
-    final_list = [''.join(new_lst[:ind])] + new_lst[ind:]
-    return [el for el in final_list if el != '']
+def get_lines(string):
+    ccaa_lst = ['Andalucía','Aragón','Asturias','Baleares','Canarias','Cantabria','CastillaLaMancha',
+                'CastillayLeón','Cataluña','Ceuta','CValenciana','Extremadura','Galicia','Madrid',
+                'Melilla','Murcia','Navarra','PaísVasco','LaRioja']
+    
+    return [string[string.find(ccaa):string.find(ccaa_lst[i+1])] for i, ccaa in enumerate(ccaa_lst[:-1])]
 
-
-def get_lst(string):
-    ind_ini = string.lower().find('andalucía')
-    ind_fin = min(string[ind_ini:].lower().find('total'),
-                  string[ind_ini:].lower().find('españa'))
-    list_tab = string[ind_ini:ind_ini + ind_fin].split('\n')
-    list_tab = [
-        el.replace('.', '') for el in [el.rstrip() for el in list_tab]
-        if el != ''
-    ]
-    list_tab = [
-        el.replace(',', '.') for el in [el.rstrip() for el in list_tab]
-        if el != ''
-    ]
-    return [parsing_table(el) for el in list_tab]
-
+def parse_list(lst):
+    lst = [el.split(' ') for el in lst]
+    return lst
 
 def hasNumbers(inputString):
     return bool(re.search(r'\d', inputString))
 
+def hasCharacters(inputString):
+    return bool(re.search(r'[a-zA-Zñáéíóú]+', inputString))
+
+def justCharacter(inputString):
+    return re.search("[a-zA-Zñáéíóú]+", inputString).group()
 
 def justNumbers(inputString):
     return re.search(r'[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?',
                      inputString).group()
 
-
-def save_csv(lst, fecha, path):
-    if len(lst[0]) == 8:
-        cols = [
-            'CCAA', 'casos', 'IA', 'Hospitalizados', 'UCI', 'muertes',
-            'curados', 'nuevos'
-        ]
-    elif len(lst[0]) == 7:
-        cols = [
-            'CCAA', 'casos', 'IA', 'Hospitalizados', 'UCI', 'muertes', 'nuevos'
-        ]
-    elif len(lst[0]) == 5:
-        cols = ['CCAA', 'casos', 'IA', 'UCI', 'muertes']
-    elif len(lst[0]) == 4:
-        cols = ['CCAA', 'casos', 'IA', 'UCI']
-    elif len(lst[0]) == 3:
-        cols = ['CCAA', 'casos', 'IA']
-    data = pd.DataFrame(lst, columns=cols)
-    data['fecha'] = [fecha] * data.shape[0]
-    cols.insert(1, 'fecha')
-    data[cols].to_csv(path, index=False)
-
+def cleanlst(lista):
+    for i, l in enumerate(lista):
+        for j, el in enumerate(l):
+            if hasNumbers(el):
+                lista[i][j] = justNumbers(el)
+            elif hasCharacters(el):
+                lista[i][j] = justCharacter(el)
+            else:
+                lista[i][j] = el
+    return lista
 
 def main(argv):
     inputfile = ''
@@ -90,20 +74,43 @@ def main(argv):
         if opt in ("-i", "--ifile"):
             inputfile = arg
 
-    rawdata = parser.from_file(inputfile)
-    fecha = get_fecha(rawdata['content'])
-    lst = get_lst(rawdata['content'])
-
-    for i, l in enumerate(lst):
-        for j, el in enumerate(l):
-            if hasNumbers(el):
-                lst[i][j] = justNumbers(el)
-            else:
-                lst[i][j] = el
-
-    save_csv(
-        lst, fecha,
-        '../data/csv_data/COVID_es_{}.csv'.format(fecha.replace('.', '_')))
+    raw = parser.from_file(inputfile)
+    fecha = get_fecha(raw['content'])
+    
+    i1 = raw['content'].find('Tabla 1. Casos')
+    i1 = i1 + raw['content'][i1:].find('Andalucía')
+    i2 = i1 + raw['content'][i1:].find('ESPAÑA')
+    
+    tab1 = raw['content'][i1:i2]
+    
+    i1 = i2 + raw['content'][i2:].find('Tabla 2. Casos')
+    i1 = i1 + raw['content'][i1:].find('Andalucía')
+    i2 = i1 + raw['content'][i1:].find('ESPAÑA')
+    
+    tab2 = raw['content'][i1:i2]
+    
+    lista1 = parse_list(get_lines(new_ccaa(tab1)))
+    lista2 = parse_list(get_lines(new_ccaa(tab2)))
+    
+    lista1 = cleanlst(lista1)
+    lista2 = cleanlst(lista2)
+    
+    colstab1 = ['CCAA', 'casos', 'nuevos', 'PCR', 'testrap', 'IA', 'drop']
+    colstab2 = ['CCAA', 'Hospitalizados', 'HospitalizadosNuevos', 
+                'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'drop']
+    
+    data1 = pd.DataFrame(lista1, columns = colstab1).drop('drop', axis=1)
+    data2 = pd.DataFrame(lista2, columns = colstab2).drop('drop', axis=1)
+    
+    data = pd.merge(data1,data2, on='CCAA')
+    data['fecha'] = fecha
+    
+    cols = ['CCAA', 'fecha', 'casos', 'nuevos', 'IA','Hospitalizados','HospitalizadosNuevos', 
+            'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'PCR', 'testrap']
+    
+    
+    data.to_csv('../data/csv_data/COVID_es_{}.csv'.format(fecha.replace('.', '_')), index=False)
+    
     print('COVID_es_{}.csv created'.format(fecha.replace('.', '_')))
 
 
