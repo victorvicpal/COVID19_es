@@ -109,7 +109,7 @@ def main(argv):
             'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'PCR', 'testrap']
     
     
-    data.to_csv('../data/csv_data/COVID_es_{}.csv'.format(fecha.replace('.', '_')), index=False)
+    data[cols].to_csv('../data/csv_data/COVID_es_{}.csv'.format(fecha.replace('.', '_')), index=False)
     
     print('COVID_es_{}.csv created'.format(fecha.replace('.', '_')))
 

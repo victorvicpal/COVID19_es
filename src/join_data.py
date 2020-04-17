@@ -69,14 +69,23 @@ def CCAA_correction(df):
         ind = date_lag(df['fecha'])
     return df
 
+def nuevos(line):
+    casos_hoy = line.values[1:]
+    casos_ayer = line.values[:-1]
+    return [np.nan]+list(casos_hoy-casos_ayer)
+
 
 def main():
     csvs = [
         el for el in sorted(os.listdir('../data/csv_data/'), reverse=True)
         if 'csv' in el
     ]
-    data = pd.DataFrame(
-        columns=['CCAA', 'fecha', 'casos', 'IA', 'UCI', 'muertes'])
+    
+    cols = ['CCAA','fecha','casos','nuevos','IA','Hospitalizados','HospitalizadosNuevos','UCI','UCINuevos',
+            'muertes','muertesNuevos','curados','curadosNuevos','PCR','testrap']
+    
+    data = pd.DataFrame(columns=cols)
+    
     for csv in csvs:
         data_int = pd.read_csv('../data/csv_data/{}'.format(csv),
                                engine='python')
@@ -93,10 +102,11 @@ def main():
     data = data.sort_values(by=['CCAA', 'fecha']).reset_index(drop=True)
 
     for CCAA in data.CCAA.unique():
-        casos_hoy = data.loc[data.CCAA == CCAA, 'casos'].values[1:]
-        casos_ayer = data.loc[data.CCAA == CCAA, 'casos'].values[:-1]
-        data.loc[data.CCAA == CCAA,
-                 'nuevos'] = [np.nan] + list(casos_hoy - casos_ayer)
+        data.loc[data.CCAA == CCAA,'nuevos'] = nuevos(data.loc[data.CCAA == CCAA,'casos'])
+        data.loc[data.CCAA == CCAA,'HospitalizadosNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'Hospitalizados'])
+        data.loc[data.CCAA == CCAA,'UCINuevos'] = nuevos(data.loc[data.CCAA == CCAA,'UCI'])
+        data.loc[data.CCAA == CCAA,'muertesNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'muertes'])
+        data.loc[data.CCAA == CCAA,'curadosNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'curados'])
 
     _data_ = pd.DataFrame(
         columns=['CCAA', 'fecha', 'casos', 'IA', 'UCI', 'muertes'])
@@ -116,7 +126,6 @@ def main():
 
     data.to_csv('../data/final_data/dataCOVID19_es.csv', index=False)
     print('dataCOVID19_es.csv updated')
-
 
 if __name__ == "__main__":
     main()
