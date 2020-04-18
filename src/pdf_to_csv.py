@@ -33,7 +33,10 @@ def get_lines(string):
                 'CastillayLeón','Cataluña','Ceuta','CValenciana','Extremadura','Galicia','Madrid',
                 'Melilla','Murcia','Navarra','PaísVasco','LaRioja']
     
-    return [string[string.find(ccaa):string.find(ccaa_lst[i+1])] for i, ccaa in enumerate(ccaa_lst[:-1])]
+    lst = [string[string.find(ccaa):string.find(ccaa_lst[i+1])] for i, ccaa in enumerate(ccaa_lst[:-1])]
+    fin = [string[string.find('LaRioja'):]]
+    
+    return lst + fin
 
 def parse_list(lst):
     lst = [el.split(' ') for el in lst]
