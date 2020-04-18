@@ -54,6 +54,8 @@ data
 | muertesNuevos       | Number of new deaths        |
 | curados       | Number of healed patients      |
 | curadosNuevos       | Number of new healed patients      |
+| PCR       | Polymerase chain reaction      |
+| testrap       | Quick test      |
 
 ## Scripts
 The `src` folder contains the scripts to get the data `download_pdf.py` & `get_pdf_today.py`, to transform pdf to csv `pdf_to_csv.py` and to get `dataCOVID19_es.csv` file > `join_data.py`.
