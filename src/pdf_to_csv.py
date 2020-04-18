@@ -95,7 +95,7 @@ def main(argv):
     lista1 = cleanlst(lista1)
     lista2 = cleanlst(lista2)
     
-    colstab1 = ['CCAA', 'casos', 'nuevos', 'PCR', 'testrap', 'IA', 'drop']
+    colstab1 = ['CCAA', 'casos', 'nuevos', 'PCR', 'testrap', 'IA','postestrap','posTOTAL', 'drop']
     colstab2 = ['CCAA', 'Hospitalizados', 'HospitalizadosNuevos', 
                 'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'drop']
     
@@ -106,7 +106,7 @@ def main(argv):
     data['fecha'] = fecha
     
     cols = ['CCAA', 'fecha', 'casos', 'nuevos', 'IA','Hospitalizados','HospitalizadosNuevos', 
-            'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'PCR', 'testrap']
+            'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'PCR', 'testrap','postestrap','posTOTAL']
     
     
     data[cols].to_csv('../data/csv_data/COVID_es_{}.csv'.format(fecha.replace('.', '_')), index=False)
