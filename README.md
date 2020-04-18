@@ -40,7 +40,7 @@ data
 ### FINAL DATA (dictionary)
 
 | Column        | Meaning       |
-| ------------- |-------------:|
+| :------------- |-------------:|
 | CCAA          | Spanish Autonomous community |
 | fecha         | Date          |
 | casos         | Cases         |
@@ -55,8 +55,10 @@ data
 | curados       | Number of healed patients      |
 | curadosNuevos       | Number of new healed patients      |
 | PCR       | Polymerase chain reaction      |
-| testrap       | Quick test      |
-
+| testrap       | Quick tests      |
+| postestrap       | Postitive quick tests      |
+| posTOTAL       | Postitive total tests      |
+	
 ## Scripts
 The `src` folder contains the scripts to get the data `download_pdf.py` & `get_pdf_today.py`, to transform pdf to csv `pdf_to_csv.py` and to get `dataCOVID19_es.csv` file > `join_data.py`.
 
