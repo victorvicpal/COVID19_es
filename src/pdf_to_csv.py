@@ -63,7 +63,7 @@ def cleanlst(lista):
             elif hasCharacters(el):
                 lista[i][j] = justCharacter(el)
             else:
-                lista[i][j] = el
+                lista[i][j] = ''
     return lista
 
 def main(argv):
