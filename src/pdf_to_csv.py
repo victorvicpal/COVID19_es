@@ -13,6 +13,14 @@ import numpy as np
 #                                             #
 ###############################################
 
+def get_ccaa_tables(string, keywords):
+    tabs = []
+    for kw in keywords:
+        i1 = string.find(kw)
+        i1 = i1 + string[i1:].find('Andalucía')
+        i2 = i1 + string[i1:].find('ESPAÑA')
+        tabs.append(string[i1:i2])
+    return tabs
 
 def get_fecha(string):
     ind_ini = string.find('(COVID-19)')
@@ -48,22 +56,32 @@ def hasNumbers(inputString):
 def hasCharacters(inputString):
     return bool(re.search(r'[a-zA-Zñáéíóú]+', inputString))
 
+def justNumbers(inputString):
+    return re.search(r'[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?', inputString).group()
+
 def justCharacter(inputString):
     return re.search("[a-zA-Zñáéíóú]+", inputString).group()
 
-def justNumbers(inputString):
-    return re.search(r'[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?',
-                     inputString).group()
+def ind_empty_spc(lst):
+    indices = [i for i, x in enumerate(lst) if x == ""]
+    if len(indices)>1:
+        vect = np.array(indices)[1:] - np.array(indices)[:-1]
+        inddel = [indices[i] for i in np.where(vect == 1)[0]][::-1]
+        if inddel:
+            return inddel
 
 def cleanlst(lista):
     for i, l in enumerate(lista):
+        inddel = ind_empty_spc(l)
+        if inddel:
+            [l.pop(i) for i in inddel]
         for j, el in enumerate(l):
             if hasNumbers(el):
                 lista[i][j] = justNumbers(el)
             elif hasCharacters(el):
                 lista[i][j] = justCharacter(el)
             else:
-                lista[i][j] = ''
+                lista[i][j] = el
     return lista
 
 def main(argv):
@@ -80,17 +98,7 @@ def main(argv):
     raw = parser.from_file(inputfile)
     fecha = get_fecha(raw['content'])
     
-    i1 = raw['content'].find('Tabla 1. Casos')
-    i1 = i1 + raw['content'][i1:].find('Andalucía')
-    i2 = i1 + raw['content'][i1:].find('ESPAÑA')
-    
-    tab1 = raw['content'][i1:i2]
-    
-    i1 = i2 + raw['content'][i2:].find('Tabla 2. Casos')
-    i1 = i1 + raw['content'][i1:].find('Andalucía')
-    i2 = i1 + raw['content'][i1:].find('ESPAÑA')
-    
-    tab2 = raw['content'][i1:i2]
+    tab1, tab2 = get_ccaa_tables(raw['content'], ['Tabla 1. Casos', 'Tabla 2. Casos'])
     
     lista1 = parse_list(get_lines(new_ccaa(tab1)))
     lista2 = parse_list(get_lines(new_ccaa(tab2)))
@@ -98,8 +106,8 @@ def main(argv):
     lista1 = cleanlst(lista1)
     lista2 = cleanlst(lista2)
     
-    colstab1 = ['CCAA', 'casos', 'nuevos', 'PCR', 'testrap', 'IA','postestrap','posTOTAL', 'drop']
-    colstab2 = ['CCAA', 'Hospitalizados', 'HospitalizadosNuevos', 
+    colstab1 = ['CCAA', 'casos', 'nuevos', 'incr %', 'IA','drop']
+    colstab2 = ['CCAA', 'Hospitalizados', 'HospitalizadosNuevos',
                 'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'drop']
     
     data1 = pd.DataFrame(lista1, columns = colstab1).drop('drop', axis=1)
@@ -108,8 +116,8 @@ def main(argv):
     data = pd.merge(data1,data2, on='CCAA')
     data['fecha'] = fecha
     
-    cols = ['CCAA', 'fecha', 'casos', 'nuevos', 'IA','Hospitalizados','HospitalizadosNuevos', 
-            'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'PCR', 'testrap','postestrap','posTOTAL']
+    cols = ['CCAA', 'fecha', 'casos', 'nuevos', 'incr %', 'IA','Hospitalizados','HospitalizadosNuevos', 
+            'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos']
     
     
     data[cols].to_csv('../data/csv_data/COVID_es_{}.csv'.format(fecha.replace('.', '_')), index=False)
