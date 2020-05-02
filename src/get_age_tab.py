@@ -50,6 +50,14 @@ def justNumbers(inputString):
 def justCharacter(inputString):
     return re.search("[a-zA-Zñáéíóú]+", inputString).group()
 
+def ind_empty_spc(lst):
+    indices = [i for i, x in enumerate(lst) if x == ""]
+    if len(indices)>1:
+        vect = np.array(indices)[1:] - np.array(indices)[:-1]
+        inddel = [indices[i] for i in np.where(vect == 1)[0]][::-1]
+        if inddel:
+            return inddel
+
 def cleanlst(lista):
     for i, l in enumerate(lista):
         inddel = ind_empty_spc(l)
@@ -107,8 +115,8 @@ def main(argv):
        'LetM', 'ConfH', 'HospH', 'HospH%', 'UCIH', 'UCIH%', 'FallH', 'FallH%',
        'LetH']
     
-    data[cols].to_csv('../../data/csv_agedata/COVID_AGE_es_{}.csv'.format(fecha.replace('.', '_')), index=False)
-    print('COVID_AGE_es_{}.csv created'.format(fecha.replace('.', '_')))
+    data[cols].to_csv('../data/csv_agedata/COVID_es_{}.csv'.format(fecha.replace('.', '_')), index=False)
+    print('COVID_es_{}.csv created'.format(fecha.replace('.', '_')))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
