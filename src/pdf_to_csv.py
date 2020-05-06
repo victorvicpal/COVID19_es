@@ -108,7 +108,7 @@ def main(argv):
     
     colstab1 = ['CCAA', 'casos', 'nuevos', 'incr %', 'IA','drop']
     colstab2 = ['CCAA', 'Hospitalizados', 'HospitalizadosNuevos',
-                'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos', 'drop']
+                'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'drop']
     
     data1 = pd.DataFrame(lista1, columns = colstab1).drop('drop', axis=1)
     data2 = pd.DataFrame(lista2, columns = colstab2).drop('drop', axis=1)
@@ -117,7 +117,7 @@ def main(argv):
     data['fecha'] = fecha
     
     cols = ['CCAA', 'fecha', 'casos', 'nuevos', 'incr %', 'IA','Hospitalizados','HospitalizadosNuevos', 
-            'UCI', 'UCINuevos', 'muertes', 'muertesNuevos', 'curados', 'curadosNuevos']
+            'UCI', 'UCINuevos', 'muertes', 'muertesNuevos']
     
     
     data[cols].to_csv('../data/csv_data/COVID_es_{}.csv'.format(fecha.replace('.', '_')), index=False)
