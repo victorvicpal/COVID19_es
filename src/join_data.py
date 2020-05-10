@@ -69,10 +69,10 @@ def CCAA_correction(df):
         ind = date_lag(df['fecha'])
     return df
 
-def nuevos(line):
-    casos_hoy = line.values[1:]
-    casos_ayer = line.values[:-1]
-    return [np.nan]+list(casos_hoy-casos_ayer)
+#def nuevos(line):
+#    casos_hoy = line.values[1:]
+#    casos_ayer = line.values[:-1]
+#    return [np.nan]+list(casos_hoy-casos_ayer)
 
 
 def main():
@@ -101,12 +101,12 @@ def main():
 
     data = data.sort_values(by=['CCAA', 'fecha']).reset_index(drop=True)
 
-    for CCAA in data.CCAA.unique():
-        data.loc[data.CCAA == CCAA,'nuevos'] = nuevos(data.loc[data.CCAA == CCAA,'casos'])
-        data.loc[data.CCAA == CCAA,'HospitalizadosNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'Hospitalizados'])
-        data.loc[data.CCAA == CCAA,'UCINuevos'] = nuevos(data.loc[data.CCAA == CCAA,'UCI'])
-        data.loc[data.CCAA == CCAA,'muertesNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'muertes'])
-        data.loc[data.CCAA == CCAA,'curadosNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'curados'])
+    #for CCAA in data.CCAA.unique():
+    #    data.loc[data.CCAA == CCAA,'nuevos'] = nuevos(data.loc[data.CCAA == CCAA,'casos'])
+    #    data.loc[data.CCAA == CCAA,'HospitalizadosNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'Hospitalizados'])
+    #    data.loc[data.CCAA == CCAA,'UCINuevos'] = nuevos(data.loc[data.CCAA == CCAA,'UCI'])
+    #    data.loc[data.CCAA == CCAA,'muertesNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'muertes'])
+    #    data.loc[data.CCAA == CCAA,'curadosNuevos'] = nuevos(data.loc[data.CCAA == CCAA,'curados'])
 
     _data_ = pd.DataFrame(
         columns=['CCAA', 'fecha', 'casos', 'IA', 'UCI', 'muertes'])
