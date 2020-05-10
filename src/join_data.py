@@ -124,6 +124,9 @@ def main():
     data = _data_.copy()
     del _data_
     
+    numcols = data.columns[2:]
+    data[numcols] = data[numcols].apply(pd.to_numeric, errors='coerce')
+    
     num = data._get_numeric_data()
     num[num < 0] = 0
 
