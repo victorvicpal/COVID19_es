@@ -123,6 +123,9 @@ def main():
     del data
     data = _data_.copy()
     del _data_
+    
+    num = data._get_numeric_data()
+    num[num < 0] = 0
 
     data.to_csv('../data/final_data/dataCOVID19_es.csv', index=False)
     print('dataCOVID19_es.csv updated')
