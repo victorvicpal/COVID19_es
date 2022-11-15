@@ -1,6 +1,6 @@
 beautifulsoup4==4.8.2
 matplotlib==3.2.0
-notebook==6.4.1
+notebook==6.4.12
 numpy==1.18.1
 pandas==1.0.1
 Pillow==9.0.1
