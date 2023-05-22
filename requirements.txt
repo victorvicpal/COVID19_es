@@ -4,7 +4,7 @@ notebook==6.4.12
 numpy==1.18.1
 pandas==1.0.1
 Pillow==9.3.0
-requests==2.22.0
+requests==2.31.0
 scikit-learn==0.22.2.post1
 scipy==1.4.1
 seaborn==0.10.0
